@@ -14,7 +14,7 @@ def start_app():
 
     source_directory = 'data_location'  # Change this to your source directory
     target_directory = 'delete_data_location'  # Change this to your target directory
-    stream_size_kb = 450  # Change this to your desired stream size in KB
+    stream_size_kb = 400  # Change this to your desired stream size in KB
     monitor_folder(source_directory, target_directory, stream_size_kb, comp_lib_service)
 
 
