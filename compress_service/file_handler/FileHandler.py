@@ -2,6 +2,7 @@ import base64
 import csv
 import io
 import json
+import logging
 import os
 
 from PIL import Image
@@ -13,7 +14,7 @@ from Util import _FILE, _UNCOMPRESSED_FILE_SIZE, _FILE_SUMMARY, _COMPRESSION_NAM
 from compressor.CompressionLibraryService import CompressionLibraryService
 from stream_handler.StreamHandlerService import StreamHandlerService
 
-
+logger = logging.getLogger(__name__)
 class FileHandler:
 
     def __init__(self, folder_location, comp_lib_service: CompressionLibraryService, stream_size_kb,
@@ -23,52 +24,37 @@ class FileHandler:
         self.chunk_size_bytes = stream_size_kb * 1024
         self.stream_handler_service: StreamHandlerService = stream_handler_service
 
-    def process(self):
-        file_paths = self.get_all_file_paths()
+    def process(self, file_path):
         folder_summary = []
         # Get the file extension
-        for file_path in file_paths:
-            if 'delete' not in file_path:
-                print(f"[START] {file_path} Processing started")
-                _, ext = os.path.splitext(file_path)
-                # Read file content based on file type
-                if ext.lower() == '.csv':
-                    content = self.read_csv(file_path)
-                elif ext.lower() == '.json':
-                    content = self.read_json(file_path)
-                elif ext.lower() == '.txt':
-                    content = self.read_text(file_path)
-                elif ext.lower() == '.jpg':
-                    content = self.read_image(file_path)
-                else:
-                    print(f"Unsupported file type: {ext}")
-                    return
-                print(f"[END] {file_path} Processing completed and file sie is {len(content) / (1024 * 1024)} MB")
-                # Stream content in chunks
-                chunk_summary = self.chunk_compressor(content, file_path)
-                file_summary = {
-                    _FILE: file_path,
-                    _UNCOMPRESSED_FILE_SIZE: len(content),
-                    _FILE_SUMMARY: chunk_summary
-                }
-                folder_summary.append(file_summary)
+        if 'delete' not in file_path:
+            logger.info(f"[START] {file_path} Processing started")
+            _, ext = os.path.splitext(file_path)
+            # Read file content based on file type
+            if ext.lower() == '.csv':
+                content = self.read_csv(file_path)
+            elif ext.lower() == '.json':
+                content = self.read_json(file_path)
+            elif ext.lower() == '.txt':
+                content = self.read_text(file_path)
+            elif ext.lower() == '.jpg':
+                content = self.read_image(file_path)
             else:
-                print(f"Ignore the compression since file already deleted {file_path}")
+                logger.info(f"Unsupported file type: {ext}")
+                return
+            logger.info(f"[END] {file_path} Processing completed and file sie is {len(content) / (1024 * 1024)} MB")
+            # Stream content in chunks
+            chunk_summary = self.chunk_compressor(content, file_path)
+            file_summary = {
+                _FILE: file_path,
+                _UNCOMPRESSED_FILE_SIZE: len(content),
+                _FILE_SUMMARY: chunk_summary
+            }
+            folder_summary.append(file_summary)
+        else:
+            logger.info(f"Ignore the compression since file already deleted {file_path}")
 
         return folder_summary
-
-    def get_all_file_paths(self):
-        # List to store all file paths
-        file_paths = []
-
-        # Walk through the directory
-        for root, directories, files in os.walk(self.folder_location):
-            for filename in files:
-                # Join the two strings to form the full file path.
-                filepath = os.path.join(root, filename)
-                file_paths.append(filepath)
-
-        return file_paths
 
     def read_csv(self, file_path):
         with open(file_path, mode='r', encoding='utf-8') as file:
@@ -195,7 +181,7 @@ class FileHandler:
 
     def mark_as_processed_file(self, file_path):
         self.rename_file_before_extension(file_path, "_delete")
-        print("Delete Completed")
+        logger.info("Delete Completed")
 
     def rename_file_before_extension(self, file_path, insert_string):
         # Split the file path into the name and the extension
