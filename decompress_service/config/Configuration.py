@@ -10,5 +10,7 @@ class Configuration:
     AWS_ACCESS_KEY = environ.get("AWS_ACCESS_KEY", "your_access_key")
     AWS_SECRET_KEY = environ.get("AWS_SECRET_KEY", "your_secret_key")
     STREAM_NAME = environ.get("STREAM_NAME", "aws-stream-compressor-kinesis-service")
-    RESULT_FILE_NAME = environ.get("RESULT_FILE_NAME", "results.txt")
-    SQS_FIFO_QUEUE = environ.get("SQS_FIFO_QUEUE", "http://sqs.us-east-1.localhost.localstack.cloud:4566/000000000000/aws-stream-compressor-sqs.fifo")
+    RESULT_FILE_NAME = environ.get("RESULT_FILE_NAME", "decompressed_data/results.html")
+    SQS_FIFO_QUEUE = environ.get("SQS_FIFO_QUEUE",
+                                 "http://sqs.us-east-1.localhost.localstack.cloud:4566/000000000000/aws-stream-compressor-sqs.fifo")
+    SCHEDULAR_TRIGGER_INTERVAL = environ.get("SCHEDULAR_TRIGGER_INTERVAL", 1)
