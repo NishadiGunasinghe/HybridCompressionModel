@@ -1,0 +1,58 @@
+version: '3.8'
+
+services:
+  compress-service:
+    build:
+      context: compress_service
+    container_name: compress-service
+    volumes:
+      - ./app:/usr/src/app
+      - ./shared-volume:/app/test_location
+    working_dir: /app
+    command: [ "python", "Main.py" ]
+    environment:
+      - AWS_ENDPOINT_OVERRIDE=http://host.docker.internal:4566
+      - ENABLE_DATA_PUSH=True
+    depends_on:
+      - localstack
+
+  decompress-service:
+    build:
+      context: decompress_service
+    container_name: decompress-service
+    working_dir: /app
+    command: [ "python", "Main.py" ]
+    environment:
+      - AWS_ENDPOINT_OVERRIDE=http://host.docker.internal:4566
+    depends_on:
+      - localstack
+
+  data-generator:
+    build:
+      context: data_generator
+    container_name: data-generator
+    volumes:
+      - ./shared-volume:/app/data
+    command: [ "python", "Main.py" ]
+
+  localstack:
+    image: localstack/localstack
+    container_name: localstack
+    ports:
+      - "4566:4566"
+      - "4571:4571"
+    environment:
+      - SERVICES=sqs,s3,kinesis
+      - EDGE_PORT=4566
+      - REGION=us-east-1
+      - PERSISTENCE=/var/lib/localstack/data
+      - KINESIS_PORT=4566
+    volumes:
+      - ./infrastructure:/etc/localstack/init/ready.d
+      - ./localstack-data:/var/lib/localstack
+
+volumes:
+  localstack-data:
+    driver: local
+  shared-volume:
+    driver: local
