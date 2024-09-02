@@ -20,10 +20,10 @@ else
   SQS_QUEUE_URL=$(awslocal sqs create-queue --queue-name aws-stream-compressor-sqs.fifo --attributes FifoQueue=true --output json | grep -o '"QueueUrl": "[^"]*' | awk -F'"' '{print $4}')
   DLQ_QUEUE_ARN=$DLQ_QUEUE_URL
 
-  awslocal sqs set-queue-attributes --queue-url $SQS_QUEUE_URL \
+  awslocal sqs set-queue-attributes --queue-url "$SQS_QUEUE_URL" \
   --attributes "{\"RedrivePolicy\":\"{\\\"deadLetterTargetArn\\\":\\\"$DLQ_QUEUE_ARN\\\",\\\"maxReceiveCount\\\":\\\"5\\\"}\"}"
 
-  awslocal sqs set-queue-attributes --queue-url $SQS_QUEUE_URL --attributes DeduplicationScope=queue
+  awslocal sqs set-queue-attributes --queue-url "$SQS_QUEUE_URL" --attributes DeduplicationScope=queue
 
   echo "Created SQS Queue: $SQS_QUEUE_URL!"
 fi
@@ -42,10 +42,10 @@ else
   SQS_QUEUE_URL=$(awslocal sqs create-queue --queue-name aws-file-sqs.fifo --attributes FifoQueue=true --output json | grep -o '"QueueUrl": "[^"]*' | awk -F'"' '{print $4}')
   DLQ_QUEUE_ARN=$DLQ_QUEUE_URL
 
-  awslocal sqs set-queue-attributes --queue-url $SQS_QUEUE_URL \
+  awslocal sqs set-queue-attributes --queue-url "$SQS_QUEUE_URL" \
   --attributes "{\"RedrivePolicy\":\"{\\\"deadLetterTargetArn\\\":\\\"$DLQ_QUEUE_ARN\\\",\\\"maxReceiveCount\\\":\\\"5\\\"}\"}"
 
-  awslocal sqs set-queue-attributes --queue-url $SQS_QUEUE_URL --attributes DeduplicationScope=queue
+  awslocal sqs set-queue-attributes --queue-url "$SQS_QUEUE_URL" --attributes DeduplicationScope=queue
 
   echo "Created SQS Queue: $SQS_QUEUE_URL!"
 fi

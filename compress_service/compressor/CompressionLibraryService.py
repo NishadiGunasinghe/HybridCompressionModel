@@ -22,7 +22,3 @@ class CompressionLibraryService(ABC):
     @abstractmethod
     def compress(self, uncompressed_data: bytes, compression_algo_number: int):
         pass
-
-    @abstractmethod
-    def decompress(self, compressed_data: bytes):
-        pass

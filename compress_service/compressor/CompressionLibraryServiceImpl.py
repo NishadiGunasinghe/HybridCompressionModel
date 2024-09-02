@@ -75,6 +75,3 @@ class CompressionLibraryServiceImpl(CompressionLibraryService):
             _COMPRESSION_ORDER: None
         })
         return compressed_data, compress_data_detail
-
-    def decompress(self, compressed_data: bytes):
-        pass

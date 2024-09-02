@@ -43,6 +43,8 @@ class FileHandler:
 
     def generate_datav2(self, schema: dict):
         schema = random.sample(schema, 5000)
+        schema.append(random.sample(schema, 5000))
+        schema.append(random.sample(schema, 500))
         logger.info(f"Generated data set size is {len(schema)}")
         return schema
 
@@ -76,7 +78,7 @@ class FileHandler:
 
     def handle_file(self):
         schema = self.load_schema(f"{os.getcwd()}/json_schema_ref/schema_{Configuration.SCHEMA_REF_NUMBER}.json")
-        generated_data = self.generate_datav2(schema)
+        generated_data = schema
         output_file = self.generate_filename()
         self.save_data(f"data/{output_file}", generated_data)
 
@@ -84,10 +86,12 @@ class FileHandler:
             "ID": str(uuid.uuid4()),
             "file_name": output_file
         }
-       # self.sqs_client.send_message(QueueUrl=Configuration.SQS_FIFO_QUEUE,
-        #                             MessageBody=json.dumps(data_metadata),
-         #                            MessageGroupId=data_metadata["ID"],
-         #                            MessageDeduplicationId=data_metadata["ID"])
+
+        response = self.sqs_client.send_message(QueueUrl=Configuration.SQS_FIFO_QUEUE,
+                                                MessageBody=json.dumps(data_metadata),
+                                                MessageGroupId=data_metadata["ID"],
+                                                MessageDeduplicationId=data_metadata["ID"])
 
         logger.info(
             f"Generated data saved to {output_file} with size approximately {len(generated_data) / (1024 * 1024)} MB. and added to sqs queue")
+        logger.info(f" message sent to queue {response}")

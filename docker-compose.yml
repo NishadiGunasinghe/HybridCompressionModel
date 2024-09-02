@@ -56,7 +56,7 @@ services:
       - PERSISTENCE=/var/lib/localstack/data
       - KINESIS_PORT=4566
     volumes:
-      - ./infrastructure:/etc/localstack/init/ready.d
+      - ./init-infrastructure:/etc/localstack/init/ready.d
       - ./localstack-data:/var/lib/localstack
 
 volumes:
