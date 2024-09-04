@@ -80,7 +80,7 @@ def append_to_file(filename, content):
 
 def _register_compression_functions(comp_lib_service: CompressionLibraryService):
     comp_lib_service.register(bz2.compress, bz2.decompress,
-                              CompressionLibraryOptions(name='bz2', order=1, compresslevel=2))
+                              CompressionLibraryOptions(name='bz2', order=1, compresslevel=5))
     comp_lib_service.register(zstd.compress, zstd.decompress,
                               CompressionLibraryOptions(name='zstd', order=2))
 
