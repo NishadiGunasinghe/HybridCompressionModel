@@ -2,7 +2,7 @@ from os import environ
 
 
 class Configuration:
-    FILE_NAME_PREFIX = environ.get("FILE_NAME_PREFIX", "robotic_data_positions")
+    FILE_NAME_PREFIX = environ.get("FILE_NAME_PREFIX", "whether_prediction")
     SCHEMA_REF_NUMBER = environ.get("SCHEMA_REF_NUMBER", 2)
     MAX_FILE_SIZE = environ.get("MAX_FILE_SIZE", 25)
     AWS_ENDPOINT_OVERRIDE = environ.get("AWS_ENDPOINT_OVERRIDE", "http://localhost:4566")

@@ -1,9 +1,9 @@
 import bz2
 import logging
-import lzma
 import threading
 import time
 
+import zstd
 from apscheduler.schedulers.background import BackgroundScheduler
 from apscheduler.triggers.interval import IntervalTrigger
 
@@ -61,14 +61,10 @@ def process_file(file_handler: FileHandler, message: str):
 
 
 def _register_compression_functions(comp_lib_service: CompressionLibraryService):
-    comp_lib_service.register(
-        lzma.compress, lzma.decompress,
-        CompressionLibraryOptions(name='lzma', order=1, format=lzma.FORMAT_XZ, check=lzma.CHECK_CRC64,
-                                  preset=lzma.PRESET_DEFAULT, filters=None)
-    )
-    comp_lib_service.register(
-        bz2.compress, bz2.decompress, CompressionLibraryOptions(name='bz2', order=2, compresslevel=2)
-    )
+    comp_lib_service.register(bz2.compress, bz2.decompress,
+                              CompressionLibraryOptions(name='bz2', order=1, compresslevel=2))
+    comp_lib_service.register(zstd.compress, zstd.decompress,
+                              CompressionLibraryOptions(name='zstd', order=2))
 
 
 if __name__ == "__main__":

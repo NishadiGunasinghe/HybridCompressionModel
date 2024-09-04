@@ -11,6 +11,8 @@ from config.Configuration import Configuration
 from stream_handler.StreamHandlerService import StreamHandlerService
 
 logger = logging.getLogger(__name__)
+
+
 class StreamHandlerServiceImpl(StreamHandlerService):
 
     def __init__(self):
@@ -49,7 +51,8 @@ class StreamHandlerServiceImpl(StreamHandlerService):
                 PartitionKey=partition_key
             )
             self.file_upload_sequence.append(result["SequenceNumber"])
-            logger.info(f"Data added to Kinesis: {result} ")
+            logger.info(
+                f"Data added to Kinesis: {result} check is addition to sqs [{chunk_number}: {total_chunks}] = [{chunk_number == total_chunks - 1}]")
             if chunk_number == total_chunks - 1:
                 data_metadata = {
                     "ID": str(uuid.uuid4()),

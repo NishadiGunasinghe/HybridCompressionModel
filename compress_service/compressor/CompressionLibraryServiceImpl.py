@@ -1,5 +1,6 @@
 import time
 
+import zstd
 from Util import _COMPRESSION_NAME, _COMPRESSION_ORDER, _COMPRESSION_FUNC, _DECOMPRESSION_FUNC, \
     _FUNC_OPTIONS, _COMPRESSED_CHUNK_SIZE, _UNCOMPRESSED_CHUNK_SIZE, _CHUNK_COMPRESSED_TIME
 from compressor import CompressionLibraryOptions
@@ -55,8 +56,11 @@ class CompressionLibraryServiceImpl(CompressionLibraryService):
         # second compression type
         start_time = time.time()
         if compression_func[_FUNC_OPTIONS].get_dict() is not None:
-            options = compression_func[_FUNC_OPTIONS].get_dict()
-            compressed_data = compression_func[_COMPRESSION_FUNC](uncompressed_data, **options)
+            if compression_func[_COMPRESSION_NAME] == "zstd":
+                compressed_data = zstd.compress(uncompressed_data, 0)
+            else:
+                options = compression_func[_FUNC_OPTIONS].get_dict()
+                compressed_data = compression_func[_COMPRESSION_FUNC](uncompressed_data, **options)
         else:
             compressed_data = compression_func[_COMPRESSION_FUNC](uncompressed_data)
         total_compress_time = time.time() - start_time
@@ -75,6 +79,3 @@ class CompressionLibraryServiceImpl(CompressionLibraryService):
             _COMPRESSION_ORDER: None
         })
         return compressed_data, compress_data_detail
-
-    def decompress(self, compressed_data: bytes):
-        pass

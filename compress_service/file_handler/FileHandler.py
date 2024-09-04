@@ -80,7 +80,7 @@ class FileHandler:
             return byte_data
 
     def string_to_bytes(self, string):
-        return string.encode("utf-8")
+        return bytes([ord(char) for char in string])
 
     def chunk_compressor(self, content, file_path):
         # Convert the text to bytes
